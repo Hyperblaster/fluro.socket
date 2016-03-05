@@ -21,10 +21,10 @@ module.exports = function(grunt) {
             }
         },
         ngtemplates: {
-            'fluro.access': {
+            'fluro.socket': {
                 cwd: './lib/html',
                 src: 'fluro/**/*.html',
-                dest: 'dist/fluro.access-templates.js',
+                dest: 'dist/fluro.socket-templates.js',
                 options: {
                     htmlmin: {
                         collapseBooleanAttributes: true,
@@ -44,7 +44,7 @@ module.exports = function(grunt) {
         concat: {
             js: {
                 src: ['lib/js/**/*.js'],
-                dest: 'dist/fluro.access.js',
+                dest: 'dist/fluro.socket.js',
             }
         },
         uglify: {
@@ -53,10 +53,10 @@ module.exports = function(grunt) {
             },
             build: {
                 src: [
-                    'dist/fluro.access.js',
-                    'dist/fluro.access-templates.js'
+                    'dist/fluro.socket.js',
+                    'dist/fluro.socket-templates.js'
                 ],
-                dest: 'dist/fluro.access.min.js'
+                dest: 'dist/fluro.socket.min.js'
             }
         }
     });
