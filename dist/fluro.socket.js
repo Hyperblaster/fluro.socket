@@ -51,7 +51,7 @@ angular.module('fluro.socket')
                 socket.on('connect', function() {
                     
                     console.log('Socket connected to ' + roomName)
-                    socket.on('content', receiveMessage);
+                    // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
                     });
@@ -62,7 +62,7 @@ angular.module('fluro.socket')
                 socket.on('reconnect', function() {
 
                     console.log('Socket reconnected')
-                    socket.on('content', receiveMessage);
+                    // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
                     });
@@ -73,7 +73,7 @@ angular.module('fluro.socket')
                 socket.on('disconnect', function() {
 
                     console.log('Socket disconnected')
-                    socket.off('content', receiveMessage);
+                    // socket.off('content', receiveMessage);
 
                 });
             }
@@ -84,7 +84,7 @@ angular.module('fluro.socket')
 
                 //////////////////////////////////////////////////
 
-                socket.off('content', receiveMessage);
+                // socket.off('content', receiveMessage);
                 socket.emit("unsubscribe", {
                     room: roomName
                 });
@@ -97,9 +97,9 @@ angular.module('fluro.socket')
 
             //////////////////////////////////////////////////
 
-            function receiveMessage(data) {
-                console.log('Retrieved Socket Message', data);
-            }
+            // function receiveMessage(data) {
+            //     console.log('Retrieved Socket Message', data);
+            // }
 
             //////////////////////////////////////////////////
 
