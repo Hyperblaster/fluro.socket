@@ -26,7 +26,7 @@ angular.module('fluro.socket')
                     currentAccount = id;
                     controller.join(id);
                 } else {
-                    controller.leave(currentRoom);
+                    controller.leave(currentAccount);
                 }
             });
 
