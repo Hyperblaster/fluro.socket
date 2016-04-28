@@ -20,6 +20,7 @@ angular.module('fluro.socket')
         if (io) {
             socket = io(host);
 
+             console.log('listen')
 
             //By default listen for the accounts
             $rootScope.$watch('user.account._id', function(id) {
@@ -49,6 +50,7 @@ angular.module('fluro.socket')
         controller.join = function(roomName) {
 
             if (socket) {
+                 console.log('join channel', roomName)
                 //////////////////////////////////////////////////
 
                 //Start listening on connect
@@ -80,6 +82,8 @@ angular.module('fluro.socket')
                     // socket.off('content', receiveMessage);
 
                 });
+            } else {
+                console.log('No socket connected');
             }
         }
 
@@ -88,6 +92,8 @@ angular.module('fluro.socket')
         controller.leave = function(roomName) {
 
             if (socket) {
+
+                 console.log('leave channel', roomName)
 
                 // socket.off('content', receiveMessage);
                 socket.emit("unsubscribe", {
