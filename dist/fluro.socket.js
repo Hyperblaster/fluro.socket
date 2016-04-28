@@ -47,6 +47,8 @@ angular.module('fluro.socket')
 
                 //////////////////////////////////////////////////
 
+                console.log('join', roomName);
+
                 //Start listening on connect
                 socket.on('connect', function() {
                     
@@ -84,6 +86,8 @@ angular.module('fluro.socket')
 
                 //////////////////////////////////////////////////
 
+                console.log('Leave', roomName);
+                
                 // socket.off('content', receiveMessage);
                 socket.emit("unsubscribe", {
                     room: roomName
