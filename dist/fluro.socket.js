@@ -20,31 +20,28 @@ angular.module('fluro.socket')
         if (io) {
             socket = io(host);
 
-             console.log('listen')
+            //By default listen for the accounts
+            $rootScope.$watch('user.account._id + user._id', function() {
 
-             if($rootScope.user) {
-                //By default listen for the accounts
-                $rootScope.$watch('user.account._id', function(id) {
-                    if (id) {
-                        //Subscribe
-                        //Store the current room
-                        currentAccount = id;
-                        controller.join(id);
+                var user = $rootScope.user;
+
+                if (user) {
+
+                    if (user.account && user.account._id) {
+                        currentAccount = user.account._id;
+                        controller.join(currentAccount);
                     } else {
                         controller.leave(currentAccount);
                     }
-                });
 
-                $rootScope.$watch('user._id', function(id) {
-                    if (id) {
-                        //Subscribe
-                        currentUser = id;
-                        controller.join(id);
+                    if (user._id) {
+                        currentUser = user._id;
+                        controller.join(currentUser);
                     } else {
                         controller.leave(currentUser);
                     }
-                });
-            }
+                }
+            });
         }
 
         //////////////////////////////////////////////////
@@ -52,7 +49,7 @@ angular.module('fluro.socket')
         controller.join = function(roomName) {
 
             if (socket) {
-                 console.log('join channel', roomName)
+                console.log('join channel', roomName)
                 //////////////////////////////////////////////////
 
                 //Start listening on connect
@@ -95,7 +92,7 @@ angular.module('fluro.socket')
 
             if (socket) {
 
-                 console.log('leave channel', roomName)
+                console.log('leave channel', roomName)
 
                 // socket.off('content', receiveMessage);
                 socket.emit("unsubscribe", {
