@@ -4,21 +4,24 @@ angular.module('fluro.socket', []);
 angular.module('fluro.socket')
     .service('FluroSocket', function($rootScope) {
 
+        //////////////////////////////////////////////////
 
-       // var FluroSocket = function() {
-            //////////////////////////////////////////////////
+        var controller = {}
 
-            var controller = {}
+        //////////////////////////////////////////////////
 
-            //////////////////////////////////////////////////
+        var host = window.location.origin;
+        var socket;
+        var currentAccount = '';
+        var currentUser = '';
 
-            var host = window.location.origin;
-            var socket = io(host);
-            var currentAccount = '';
-            var currentUser = '';
+        /////////////////////////////////////////
 
-            //////////////////////////////////////////////////
+        if (io) {
+            socket = io(host);
 
+
+            //By default listen for the accounts
             $rootScope.$watch('user.account._id', function(id) {
                 if (id) {
                     //Subscribe
@@ -30,7 +33,6 @@ angular.module('fluro.socket')
                 }
             });
 
-
             $rootScope.$watch('user._id', function(id) {
                 if (id) {
                     //Subscribe
@@ -40,18 +42,18 @@ angular.module('fluro.socket')
                     controller.leave(currentUser);
                 }
             });
+        }
 
-            //////////////////////////////////////////////////
+        //////////////////////////////////////////////////
 
-            controller.join = function(roomName) {
+        controller.join = function(roomName) {
 
+            if (socket) {
                 //////////////////////////////////////////////////
-
-                console.log('join', roomName);
 
                 //Start listening on connect
                 socket.on('connect', function() {
-                    
+
                     console.log('Socket connected to ' + roomName)
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
@@ -79,15 +81,14 @@ angular.module('fluro.socket')
 
                 });
             }
+        }
 
-            //////////////////////////////////////////////////
+        //////////////////////////////////////////////////
 
-            controller.leave = function(roomName) {
+        controller.leave = function(roomName) {
 
-                //////////////////////////////////////////////////
+            if (socket) {
 
-                console.log('Leave', roomName);
-                
                 // socket.off('content', receiveMessage);
                 socket.emit("unsubscribe", {
                     room: roomName
@@ -98,38 +99,29 @@ angular.module('fluro.socket')
                 socket.off('reconnect')
                 socket.off('disconnect');
             }
+        }
 
-            //////////////////////////////////////////////////
+        //////////////////////////////////////////////////
 
-            // function receiveMessage(data) {
-            //     console.log('Retrieved Socket Message', data);
-            // }
-
-            //////////////////////////////////////////////////
-
-            controller.on = function(event, callback) {
+        controller.on = function(event, callback) {
+            if (socket) {
                 socket.on(event, callback);
-                /*
-        socket.on(event, function() {
-            var args = arguments;
-            $rootScope.$apply(function() {
-                callback.apply(socket, args);
-            });
-        });
-        /**/
+            } else {
+                console.log('No socket available')
             }
+        }
 
-            //////////////////////////////////////////////////
+        //////////////////////////////////////////////////
 
-            controller.off = function(event, callback) {
+        controller.off = function(event, callback) {
+            if (socket) {
                 socket.off(event, callback);
+            } else {
+                console.log('No socket available')
             }
+        }
 
-            //////////////////////////////////////////////////
+        //////////////////////////////////////////////////
 
-            return controller;
-
-        // }
-
-        // return FluroSocket;
+        return controller;
     });
