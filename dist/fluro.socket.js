@@ -17,7 +17,7 @@ angular.module('fluro.socket')
 
         /////////////////////////////////////////
 
-        if (io) {
+        if (typeof io !== 'undefined') {
             socket = io(host);
 
             //By default listen for the accounts
