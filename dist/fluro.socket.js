@@ -40,6 +40,14 @@ angular.module('fluro.socket')
                     } else {
                         controller.leave(currentUser);
                     }
+                } else {
+                    if(currentUser) {
+                        controller.leave(currentUser);
+                    }
+
+                    if(currentAccount) {
+                        controller.leave(currentAccount);
+                    }
                 }
             });
         }
