@@ -21,6 +21,39 @@ angular.module('fluro.socket')
             socket = io(host);
 
             //By default listen for the accounts
+            $rootScope.$watch('user.account._id', function() {
+
+                var user = $rootScope.user;
+
+                if (user) {
+
+                    if (user.account && user.account._id) {
+                        currentAccount = user.account._id;
+                        controller.join(currentAccount);
+                    } else {
+                        controller.leave(currentAccount);
+                    }
+
+                    // if (user._id) {
+                    //     currentUser = user._id;
+                    //     controller.join(currentUser);
+                    // } else {
+                    //     controller.leave(currentUser);
+                    // }
+                } else {
+                    // if(currentUser) {
+                    //     controller.leave(currentUser);
+                    // }
+
+                    if(currentAccount) {
+                        controller.leave(currentAccount);
+                    }
+                }
+            });
+
+            
+            /**
+            //By default listen for the accounts
             $rootScope.$watch('user.account._id + user._id', function() {
 
                 var user = $rootScope.user;
@@ -50,6 +83,7 @@ angular.module('fluro.socket')
                     }
                 }
             });
+            /**/
         }
 
         //////////////////////////////////////////////////
