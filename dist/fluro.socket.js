@@ -2,7 +2,7 @@
 //Create Fluro UI With dependencies
 angular.module('fluro.socket', []);
 angular.module('fluro.socket')
-    .service('FluroSocket', function($rootScope) {
+    .service('FluroSocket', function(Fluro, $rootScope) {
 
         //////////////////////////////////////////////////
 
@@ -10,7 +10,7 @@ angular.module('fluro.socket')
 
         //////////////////////////////////////////////////
 
-        var host = window.location.origin;
+        var host = Fluro.apiURL;//window.location.origin;
         var socket;
         var currentAccount = '';
         var currentUser = '';
