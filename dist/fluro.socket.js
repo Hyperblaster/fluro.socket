@@ -91,13 +91,13 @@ angular.module('fluro.socket')
         controller.join = function(roomName) {
 
             if (socket) {
-                // console.log('Subscribe to room', roomName)
+                console.log('join', roomName)
                 //////////////////////////////////////////////////
 
                 //Start listening on connect
                 socket.on('connect', function() {
 
-                    console.log('Socket connected to ' + roomName);
+                    // console.log('Socket connected to ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
@@ -108,7 +108,7 @@ angular.module('fluro.socket')
                 //Start listening on connect
                 socket.on('reconnect', function() {
 
-                    console.log('Socket reconnected to ' + roomName);
+                    // console.log('Socket reconnected to ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
@@ -119,12 +119,12 @@ angular.module('fluro.socket')
                 //Stop listening on disconnect
                 socket.on('disconnect', function() {
 
-                    console.log('Socket disconnected');
+                    // console.log('Socket disconnected');
                     // socket.off('content', receiveMessage);
 
                 });
             } else {
-                console.log('No socket connected');
+                // console.log('No socket connected');
             }
         }
 
@@ -134,7 +134,7 @@ angular.module('fluro.socket')
 
             if (socket) {
 
-                console.log('Leave channel', roomName)
+                console.log('leave', roomName)
 
                 // socket.off('content', receiveMessage);
                 socket.emit("unsubscribe", {
@@ -151,8 +151,6 @@ angular.module('fluro.socket')
         //////////////////////////////////////////////////
 
         controller.emit = function(roomName, key, data) {
-
-            console.log('Emit to socket', roomName);
             socket.to(roomName).emit(key, data);
 
             // socket.emit(key, {room:roomName}channelName).emit(eventName, data);
