@@ -28,7 +28,11 @@ angular.module('fluro.socket')
                 if (user) {
 
                     if (user.account && user.account._id) {
+
+
                         currentAccount = user.account._id;
+
+                        console.log('JOIN', currentAccount);
                         controller.join(currentAccount);
                     } else {
                         controller.leave(currentAccount);
