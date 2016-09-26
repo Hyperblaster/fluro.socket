@@ -14,6 +14,7 @@ angular.module('fluro.socket')
         var socket;
         var currentAccount = '';
         var currentUser = '';
+        var currentSocketID;
 
         /////////////////////////////////////////
 
@@ -88,6 +89,12 @@ angular.module('fluro.socket')
 
         //////////////////////////////////////////////////
 
+        controller.getSocketID = function() {
+            return currentSocketID;
+        }
+
+        //////////////////////////////////////////////////
+
         controller.join = function(roomName) {
 
             if (socket) {
@@ -96,6 +103,9 @@ angular.module('fluro.socket')
 
                 //Start listening on connect
                 socket.on('connect', function() {
+
+                    //Set the current socket id
+                    currentSocketID = socket.io.engine.id;
 
                     // console.log('Socket connected to ' + roomName);
                     // socket.on('content', receiveMessage);
@@ -108,6 +118,9 @@ angular.module('fluro.socket')
                 //Start listening on connect
                 socket.on('reconnect', function() {
 
+                    //Set the current socket id
+                    currentSocketID = socket.io.engine.id;
+
                     // console.log('Socket reconnected to ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
@@ -119,6 +132,8 @@ angular.module('fluro.socket')
                 //Stop listening on disconnect
                 socket.on('disconnect', function() {
 
+                    //Set the current socket id
+                    currentSocketID = null;
                     // console.log('Socket disconnected');
                     // socket.off('content', receiveMessage);
 
