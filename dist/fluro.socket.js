@@ -18,6 +18,10 @@ angular.module('fluro.socket')
 
         /////////////////////////////////////////
 
+        var listeners = [];
+
+        /////////////////////////////////////////
+
         if (typeof io !== 'undefined') {
             socket = io(host);
 
@@ -113,6 +117,12 @@ angular.module('fluro.socket')
                         room: roomName
                     });
 
+
+                    //Stop listening to all events
+                    _.each(listeners, function(listener) {
+                        socket.on(listener);
+                    })
+
                 });
 
                 //Start listening on connect
@@ -160,6 +170,11 @@ angular.module('fluro.socket')
                 socket.off('connect')
                 socket.off('reconnect')
                 socket.off('disconnect');
+
+                //Stop listening to all events
+                _.each(listeners, function(listener) {
+                    socket.off(listener);
+                })
             }
         }
 
@@ -214,6 +229,15 @@ angular.module('fluro.socket')
         //////////////////////////////////////////////////
 
         controller.on = function(event, callback) {
+
+            //Stop listening to all events
+            if(listeners.indexOf(event) ==  -1) {
+                listeners.push(event);
+                console.log('Add listener', event, listeners);
+            }
+                
+
+
             if (socket) {
                 socket.on(event, callback);
             }
@@ -222,6 +246,12 @@ angular.module('fluro.socket')
         //////////////////////////////////////////////////
 
         controller.off = function(event, callback) {
+
+            //Stop listening to this event
+            listeners.pull(event);
+
+            console.log('Pull from listeners', event, listeners);
+
             if (socket) {
                 socket.off(event, callback);
             }
