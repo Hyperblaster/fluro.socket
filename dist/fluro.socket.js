@@ -10,7 +10,7 @@ angular.module('fluro.socket')
 
         //////////////////////////////////////////////////
 
-        var host = Fluro.apiURL;//window.location.origin;
+        var host = Fluro.apiURL; //window.location.origin;
         var socket;
         var currentAccount = '';
         var currentUser = '';
@@ -103,7 +103,7 @@ angular.module('fluro.socket')
 
             if (socket) {
                 console.log('join', roomName)
-                //////////////////////////////////////////////////
+                    //////////////////////////////////////////////////
 
                 //Start listening on connect
                 socket.on('connect', function() {
@@ -116,13 +116,6 @@ angular.module('fluro.socket')
                     socket.emit("subscribe", {
                         room: roomName
                     });
-
-
-                    //Stop listening to all events
-                    _.each(listeners, function(listener) {
-                        socket.on(listener);
-                    })
-
                 });
 
                 //Start listening on connect
@@ -148,6 +141,15 @@ angular.module('fluro.socket')
                     // socket.off('content', receiveMessage);
 
                 });
+
+                console.log('Reattach', listeners.length, 'listeners')
+
+                //Stop listening to all events
+                _.each(listeners, function(listener) {
+                    socket.on(listener);
+                })
+
+
             } else {
                 // console.log('No socket connected');
             }
@@ -171,7 +173,8 @@ angular.module('fluro.socket')
                 socket.off('reconnect')
                 socket.off('disconnect');
 
-                //Stop listening to all events
+                console.log('Leave', listeners.length, 'listeners')
+                    //Stop listening to all events
                 _.each(listeners, function(listener) {
                     socket.off(listener);
                 })
@@ -231,11 +234,11 @@ angular.module('fluro.socket')
         controller.on = function(event, callback) {
 
             //Stop listening to all events
-            if(listeners.indexOf(event) ==  -1) {
+            if (listeners.indexOf(event) == -1) {
                 listeners.push(event);
-                console.log('Add listener', event, listeners);
+                console.log('Add listener', event, listeners.length);
             }
-                
+
 
 
             if (socket) {
@@ -250,7 +253,7 @@ angular.module('fluro.socket')
             //Stop listening to this event
             _.pull(listeners, event);
 
-            console.log('Pull from listeners', event, listeners);
+            console.log('Pull from listeners', event, listeners.length);
 
             if (socket) {
                 socket.off(event, callback);
