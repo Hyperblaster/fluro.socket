@@ -102,7 +102,7 @@ angular.module('fluro.socket')
         controller.join = function(roomName) {
 
             if (socket) {
-                console.log('join', roomName)
+                //console.log('join', roomName)
                     //////////////////////////////////////////////////
 
                 //Start listening on connect
@@ -111,7 +111,7 @@ angular.module('fluro.socket')
                     //Set the current socket id
                     currentSocketID = socket.io.engine.id;
 
-                    // console.log('Socket connected to ' + roomName);
+                    // //console.log('Socket connected to ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
@@ -124,7 +124,7 @@ angular.module('fluro.socket')
                     //Set the current socket id
                     currentSocketID = socket.io.engine.id;
 
-                    // console.log('Socket reconnected to ' + roomName);
+                    // //console.log('Socket reconnected to ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
@@ -137,12 +137,12 @@ angular.module('fluro.socket')
 
                     //Set the current socket id
                     currentSocketID = null;
-                    // console.log('Socket disconnected');
+                    // //console.log('Socket disconnected');
                     // socket.off('content', receiveMessage);
 
                 });
 
-                console.log('Reattach', listeners.length, 'listeners')
+                //console.log('Reattach', listeners.length, 'listeners')
 
                 //Stop listening to all events
                 _.each(listeners, function(listener) {
@@ -151,7 +151,7 @@ angular.module('fluro.socket')
 
 
             } else {
-                // console.log('No socket connected');
+                // //console.log('No socket connected');
             }
         }
 
@@ -161,7 +161,7 @@ angular.module('fluro.socket')
 
             if (socket) {
 
-                console.log('leave', roomName)
+                //console.log('leave', roomName)
 
                 // socket.off('content', receiveMessage);
                 socket.emit("unsubscribe", {
@@ -173,7 +173,7 @@ angular.module('fluro.socket')
                 socket.off('reconnect')
                 socket.off('disconnect');
 
-                console.log('Leave', listeners.length, 'listeners')
+                //console.log('Leave', listeners.length, 'listeners')
                     //Stop listening to all events
                 _.each(listeners, function(listener) {
                     socket.off(listener);
@@ -236,7 +236,7 @@ angular.module('fluro.socket')
             //Stop listening to all events
             if (listeners.indexOf(event) == -1) {
                 listeners.push(event);
-                console.log('Add listener', event, listeners.length);
+                //console.log('Add listener', event, listeners.length);
             }
 
 
@@ -253,10 +253,17 @@ angular.module('fluro.socket')
             //Stop listening to this event
             _.pull(listeners, event);
 
-            console.log('Pull from listeners', event, listeners.length);
+            //console.log('Pull from listeners', event, listeners.length);
 
             if (socket) {
-                socket.off(event, callback);
+                if(callback) {
+                    socket.off(event, callback);
+                } else {
+
+                    //console.log('REMOVE FROM LISTENERS', event);
+                    socket.off(event);
+                }
+                
             }
         }
 
