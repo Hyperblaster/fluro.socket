@@ -257,7 +257,8 @@ angular.module('fluro.socket')
 
             if (socket) {
                 if(callback) {
-                    socket.off(event, callback);
+                    console.log('Remove listener', event)
+                    socket.removeListener(event, callback);
                 } else {
 
                     //console.log('REMOVE FROM LISTENERS', event);
