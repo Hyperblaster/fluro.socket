@@ -47,6 +47,19 @@ module.exports = function(grunt) {
                 dest: 'dist/fluro.socket.js',
             }
         },
+
+        ngAnnotate: {
+            options: {
+                singleQuotes: true
+            },
+            app: {
+                files: {
+                    'dist/fluro.socket.js': ['dist/fluro.socket.js'],
+                }
+            }
+        },
+
+
         uglify: {
             options: {
                 mangle: false
@@ -63,7 +76,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('default', ['watch']);
     //grunt.registerTask('build', ['copy:build', 'htmlmin:build', 'uglify:build', 'cssmin:build']);
-    grunt.registerTask('compile', ['ngtemplates', 'concat', 'uglify']);
+    grunt.registerTask('compile', ['ngtemplates', 'concat', 'ngAnnotate', 'uglify']);
 
     //'autoprefixer', 'cssmin'
 

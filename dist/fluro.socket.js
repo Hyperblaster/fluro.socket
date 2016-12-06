@@ -2,7 +2,7 @@
 //Create Fluro UI With dependencies
 angular.module('fluro.socket', []);
 angular.module('fluro.socket')
-    .service('FluroSocket', function(Fluro, $rootScope) {
+    .service('FluroSocket', ['Fluro', '$rootScope', function(Fluro, $rootScope) {
 
         //////////////////////////////////////////////////
 
@@ -271,4 +271,4 @@ angular.module('fluro.socket')
         //////////////////////////////////////////////////
 
         return controller;
-    });
+    }]);
