@@ -23,7 +23,8 @@ angular.module('fluro.socket')
         /////////////////////////////////////////
 
         if (typeof io !== 'undefined') {
-            socket = io(host);
+            // socket = io(host);
+            socket = io({transports: ['websocket'], upgrade: false});
 
             //By default listen for the accounts
             $rootScope.$watch('user.account._id', function() {
