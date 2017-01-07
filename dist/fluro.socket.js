@@ -185,8 +185,13 @@ angular.module('fluro.socket')
         //////////////////////////////////////////////////
 
         controller.emit = function(roomName, key, data) {
-            socket.to(roomName).emit(key, data);
 
+            if(socket) {
+
+                //emit to room
+                socket.of(roomName).emit(key, data);
+            }
+            
             // socket.emit(key, {room:roomName}channelName).emit(eventName, data);
             /**
             data.key = key;
