@@ -23,6 +23,8 @@ angular.module('fluro.socket')
         /////////////////////////////////////////
 
         if (typeof io !== 'undefined') {
+
+            console.log('init fluro-socket')
             // socket = io(host);
             socket = io(Fluro.apiURL, {transports: ['websocket'], upgrade: false});
 
@@ -112,7 +114,7 @@ angular.module('fluro.socket')
                     //Set the current socket id
                     currentSocketID = socket.io.engine.id;
 
-                    // //console.log('Socket connected to ' + roomName);
+                    console.log('websocket connected to ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
@@ -125,7 +127,7 @@ angular.module('fluro.socket')
                     //Set the current socket id
                     currentSocketID = socket.io.engine.id;
 
-                    // //console.log('Socket reconnected to ' + roomName);
+                    console.log('websocket reconnected to ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
@@ -138,7 +140,7 @@ angular.module('fluro.socket')
 
                     //Set the current socket id
                     currentSocketID = null;
-                    // //console.log('Socket disconnected');
+                    console.log('websocket disconected');
                     // socket.off('content', receiveMessage);
 
                 });
@@ -162,7 +164,7 @@ angular.module('fluro.socket')
 
             if (socket) {
 
-                //console.log('leave', roomName)
+                console.log('leave', roomName)
 
                 // socket.off('content', receiveMessage);
                 socket.emit("unsubscribe", {
@@ -250,7 +252,7 @@ angular.module('fluro.socket')
 
             //Already listening for this event
             if(alreadyListening) {
-                return console.log('Already listening for ', event);
+                return console.log('websocket already listening for ', event);
             } else {
 
                 //Add this listener to the array
