@@ -46,8 +46,9 @@ angular.module('fluro.socket')
             /////////////////////////////////////////
 
             //Listen for changes to the user account
-            $rootScope.$watch('user.account._id', function() {
+            $rootScope.$watch('user', function() {
 
+                console.log('user change')
                 //Get the user object
                 var user = $rootScope.user;
 
