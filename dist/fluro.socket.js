@@ -16,30 +16,62 @@ angular.module('fluro.socket')
         var currentUser = '';
         var currentSocketID;
 
+
+
         /////////////////////////////////////////
 
         var listeners = [];
 
         /////////////////////////////////////////
 
-        if (typeof io !== 'undefined') {
 
-            console.log('init fluro-socket')
-            // socket = io(host);
-            socket = io(Fluro.apiURL, {transports: ['websocket'], upgrade: false});
+        controller.init = function() {
 
-            //By default listen for the accounts
+            console.log('init socket server');
+
+            if (typeof io == 'undefined') {
+                return console.log('io is not defined');
+            }
+
+            /////////////////////////////////////////
+
+            console.log('connecting to socket server')
+            
+            //Create socket connection
+            socket = io(Fluro.apiURL, {
+                transports: ['websocket'],
+                upgrade: false
+            });
+
+            /////////////////////////////////////////
+
+            //Listen for changes to the user account
             $rootScope.$watch('user.account._id', function() {
 
+                //Get the user object
                 var user = $rootScope.user;
 
+                //If the user has authenticated
                 if (user) {
 
-                    if (user.account && user.account._id) {
-                        currentAccount = user.account._id;
+                    //Get the user account and simplify it to just the ID
+                    var userAccountID = user.account;
+                    if(userAccountID._id) {
+                        userAccountID = userAccountID._id;
+                    }
+
+                    if(userAccountID) {
+                        //Set the current account and join the channel
+                        currentAccount = userAccountID;
                         controller.join(currentAccount);
                     } else {
-                        controller.leave(currentAccount);
+
+                        if(currentAccount) {
+                            //We dont know the user account id but we are
+                            //connected to a channel so leave it now
+                            controller.leave(currentAccount);
+                        }
+                        
                     }
 
                     // if (user._id) {
@@ -54,45 +86,49 @@ angular.module('fluro.socket')
                     // }
 
                     if (currentAccount) {
+                        console.log('no user - leave channel')
                         controller.leave(currentAccount);
                     }
                 }
             });
 
 
-            /**
-            //By default listen for the accounts
-            $rootScope.$watch('user.account._id + user._id', function() {
+                /**
+                //By default listen for the accounts
+                $rootScope.$watch('user.account._id + user._id', function() {
 
-                var user = $rootScope.user;
+                    var user = $rootScope.user;
 
-                if (user) {
+                    if (user) {
 
-                    if (user.account && user.account._id) {
-                        currentAccount = user.account._id;
-                        controller.join(currentAccount);
+                        if (user.account && user.account._id) {
+                            currentAccount = user.account._id;
+                            controller.join(currentAccount);
+                        } else {
+                            controller.leave(currentAccount);
+                        }
+
+                        if (user._id) {
+                            currentUser = user._id;
+                            controller.join(currentUser);
+                        } else {
+                            controller.leave(currentUser);
+                        }
                     } else {
-                        controller.leave(currentAccount);
-                    }
+                        if(currentUser) {
+                            controller.leave(currentUser);
+                        }
 
-                    if (user._id) {
-                        currentUser = user._id;
-                        controller.join(currentUser);
-                    } else {
-                        controller.leave(currentUser);
+                        if(currentAccount) {
+                            controller.leave(currentAccount);
+                        }
                     }
-                } else {
-                    if(currentUser) {
-                        controller.leave(currentUser);
-                    }
+                });
+                /**/
+            
 
-                    if(currentAccount) {
-                        controller.leave(currentAccount);
-                    }
-                }
-            });
-            /**/
         }
+
 
         //////////////////////////////////////////////////
 
@@ -106,7 +142,7 @@ angular.module('fluro.socket')
 
             if (socket) {
                 //console.log('join', roomName)
-                    //////////////////////////////////////////////////
+                //////////////////////////////////////////////////
 
                 //Start listening on connect
                 socket.on('connect', function() {
@@ -114,7 +150,7 @@ angular.module('fluro.socket')
                     //Set the current socket id
                     currentSocketID = socket.io.engine.id;
 
-                    console.log('websocket connected to ' + roomName);
+                    console.log('connected to socket channel ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
@@ -127,7 +163,7 @@ angular.module('fluro.socket')
                     //Set the current socket id
                     currentSocketID = socket.io.engine.id;
 
-                    console.log('websocket reconnected to ' + roomName);
+                    console.log('reconnected to socket channel ' + roomName);
                     // socket.on('content', receiveMessage);
                     socket.emit("subscribe", {
                         room: roomName
@@ -140,12 +176,10 @@ angular.module('fluro.socket')
 
                     //Set the current socket id
                     currentSocketID = null;
-                    console.log('websocket disconected');
+                    console.log('disconnected from socket channel');
                     // socket.off('content', receiveMessage);
 
                 });
-
-                //console.log('Reattach', listeners.length, 'listeners')
 
                 //Stop listening to all events
                 _.each(listeners, function(listener) {
@@ -154,7 +188,7 @@ angular.module('fluro.socket')
 
 
             } else {
-                // //console.log('No socket connected');
+                return console.log('window.socket is not defined so can not join channel')
             }
         }
 
@@ -177,18 +211,21 @@ angular.module('fluro.socket')
                 socket.off('disconnect');
 
                 //console.log('Leave', listeners.length, 'listeners')
-                    //Stop listening to all events
+                //Stop listening to all events
                 _.each(listeners, function(listener) {
                     socket.off(listener);
                 })
+            } else {
+                return console.log('window.socket is not defined so can not leave channel')
             }
         }
 
         //////////////////////////////////////////////////
+        //////////////////////////////////////////////////
 
         controller.emit = function(roomName, key, data) {
 
-            if(socket) {
+            if (socket) {
 
                 //emit to room
                 console.log('Emit to room', roomName, socket);
@@ -196,7 +233,7 @@ angular.module('fluro.socket')
 
                 socket.emit(key, data);
             }
-            
+
             // socket.emit(key, {room:roomName}channelName).emit(eventName, data);
             /**
             data.key = key;
@@ -242,7 +279,10 @@ angular.module('fluro.socket')
 
         //////////////////////////////////////////////////
 
+        //Listen for socket events
         controller.on = function(event, callback) {
+
+            /////////////////////////////////////////////////////////////
 
             var alreadyListening = _.find(listeners, function(listener) {
                 var sameCallback = listener.callback == callback;
@@ -250,42 +290,43 @@ angular.module('fluro.socket')
                 return (sameCallback && sameEvent);
             })
 
+            /////////////////////////////////////////////////////////////
+
             //Already listening for this event
-            if(alreadyListening) {
-                return console.log('websocket already listening for ', event);
+            if (alreadyListening) {
+                return console.log('socket already listening for ', event);
             } else {
 
                 //Add this listener to the array
-                listeners.push({event:event, callback:callback});
+                listeners.push({
+                    event: event,
+                    callback: callback
+                });
 
                 //start listening
                 if (socket) {
                     socket.on(event, callback);
-                }   
+                }
             }
-
-            // if (listeners.indexOf(event) == -1) {
-            //     listeners.push(event);
-            //     // console.log('Add listener', event, listeners.length);
-            // }
-            
         }
 
+        //////////////////////////////////////////////////
+        //////////////////////////////////////////////////
         //////////////////////////////////////////////////
 
         controller.off = function(event, callback) {
 
-            if(callback) {
+            if (callback) {
                 var match = _.find(listeners, function(listener) {
                     var sameCallback = listener.callback == callback;
                     var sameEvent = listener.event == event;
                     return (sameCallback && sameEvent);
                 });
 
-                if(match) {
+                if (match) {
                     _.pull(listeners, match);
 
-                    if(socket) {
+                    if (socket) {
                         //Remove the listener
                         socket.removeListener(event, callback);
                     }
@@ -297,11 +338,16 @@ angular.module('fluro.socket')
                     return listener.event != event;
                 });
 
-                if(socket) {
-                   socket.off(event);
+                if (socket) {
+                    socket.off(event);
                 }
             }
         }
+
+        //////////////////////////////////////////////////
+
+        //Initialize on startup
+        controller.init();
 
         //////////////////////////////////////////////////
 
