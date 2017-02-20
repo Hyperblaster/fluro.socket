@@ -36,7 +36,7 @@ angular.module('fluro.socket')
             /////////////////////////////////////////
 
             console.log('connecting to socket server')
-            
+
             //Create socket connection
             socket = io(Fluro.apiURL, {
                 transports: ['websocket'],
@@ -49,7 +49,7 @@ angular.module('fluro.socket')
             $rootScope.$watch('user', function() {
 
                 console.log('user change')
-                //Get the user object
+                    //Get the user object
                 var user = $rootScope.user;
 
                 //If the user has authenticated
@@ -57,11 +57,11 @@ angular.module('fluro.socket')
 
                     //Get the user account and simplify it to just the ID
                     var userAccountID = user.account;
-                    if(userAccountID._id) {
+                    if (userAccountID._id) {
                         userAccountID = userAccountID._id;
                     }
 
-                    if(userAccountID) {
+                    if (userAccountID) {
 
                         console.log('connect to ', userAccountID);
                         //Set the current account and join the channel
@@ -70,12 +70,12 @@ angular.module('fluro.socket')
                     } else {
 
                         console.log('user account id not found');
-                        if(currentAccount) {
+                        if (currentAccount) {
                             //We dont know the user account id but we are
                             //connected to a channel so leave it now
                             controller.leave(currentAccount);
                         }
-                        
+
                     }
 
                     // if (user._id) {
@@ -99,39 +99,39 @@ angular.module('fluro.socket')
             });
 
 
-                /**
-                //By default listen for the accounts
-                $rootScope.$watch('user.account._id + user._id', function() {
+            /**
+            //By default listen for the accounts
+            $rootScope.$watch('user.account._id + user._id', function() {
 
-                    var user = $rootScope.user;
+                var user = $rootScope.user;
 
-                    if (user) {
+                if (user) {
 
-                        if (user.account && user.account._id) {
-                            currentAccount = user.account._id;
-                            controller.join(currentAccount);
-                        } else {
-                            controller.leave(currentAccount);
-                        }
-
-                        if (user._id) {
-                            currentUser = user._id;
-                            controller.join(currentUser);
-                        } else {
-                            controller.leave(currentUser);
-                        }
+                    if (user.account && user.account._id) {
+                        currentAccount = user.account._id;
+                        controller.join(currentAccount);
                     } else {
-                        if(currentUser) {
-                            controller.leave(currentUser);
-                        }
-
-                        if(currentAccount) {
-                            controller.leave(currentAccount);
-                        }
+                        controller.leave(currentAccount);
                     }
-                });
-                /**/
-            
+
+                    if (user._id) {
+                        currentUser = user._id;
+                        controller.join(currentUser);
+                    } else {
+                        controller.leave(currentUser);
+                    }
+                } else {
+                    if(currentUser) {
+                        controller.leave(currentUser);
+                    }
+
+                    if(currentAccount) {
+                        controller.leave(currentAccount);
+                    }
+                }
+            });
+            /**/
+
 
         }
 
@@ -146,84 +146,83 @@ angular.module('fluro.socket')
 
         controller.join = function(roomName) {
 
-            if (socket) {
-                //console.log('join', roomName)
-                //////////////////////////////////////////////////
-
-                //Start listening on connect
-                socket.on('connect', function() {
-
-                    //Set the current socket id
-                    currentSocketID = socket.io.engine.id;
-
-                    console.log('connected to socket channel ' + roomName);
-                    // socket.on('content', receiveMessage);
-                    socket.emit("subscribe", {
-                        room: roomName
-                    });
-                });
-
-                //Start listening on connect
-                socket.on('reconnect', function() {
-
-                    //Set the current socket id
-                    currentSocketID = socket.io.engine.id;
-
-                    console.log('reconnected to socket channel ' + roomName);
-                    // socket.on('content', receiveMessage);
-                    socket.emit("subscribe", {
-                        room: roomName
-                    });
-
-                });
-
-                //Stop listening on disconnect
-                socket.on('disconnect', function() {
-
-                    //Set the current socket id
-                    currentSocketID = null;
-                    console.log('disconnected from socket channel');
-                    // socket.off('content', receiveMessage);
-
-                });
-
-                //Stop listening to all events
-                _.each(listeners, function(listener) {
-                    socket.on(listener);
-                })
-
-
-            } else {
+            if (!socket) {
                 return console.log('window.socket is not defined so can not join channel')
             }
+
+            //////////////////////////////////////////////////
+
+            //Start listening on connect
+            socket.on('connect', function() {
+
+                //Set the current socket id
+                currentSocketID = socket.io.engine.id;
+
+                console.log('connected to socket channel ' + roomName);
+                // socket.on('content', receiveMessage);
+                socket.emit("subscribe", {
+                    room: roomName
+                });
+            });
+
+            //Start listening on connect
+            socket.on('reconnect', function() {
+
+                //Set the current socket id
+                currentSocketID = socket.io.engine.id;
+
+                console.log('reconnected to socket channel ' + roomName);
+                // socket.on('content', receiveMessage);
+                socket.emit("subscribe", {
+                    room: roomName
+                });
+
+            });
+
+            //Stop listening on disconnect
+            socket.on('disconnect', function() {
+
+                //Set the current socket id
+                currentSocketID = null;
+                console.log('disconnected from socket channel');
+                // socket.off('content', receiveMessage);
+
+            });
+
+            //Start listening to all events
+            _.each(listeners, function(listener) {
+                socket.on(listener);
+            })
         }
 
         //////////////////////////////////////////////////
 
         controller.leave = function(roomName) {
 
-            if (socket) {
-
-                console.log('leave', roomName)
-
-                // socket.off('content', receiveMessage);
-                socket.emit("unsubscribe", {
-                    room: roomName
-                });
-
-                //Start listening on connect
-                socket.off('connect')
-                socket.off('reconnect')
-                socket.off('disconnect');
-
-                //console.log('Leave', listeners.length, 'listeners')
-                //Stop listening to all events
-                _.each(listeners, function(listener) {
-                    socket.off(listener);
-                })
-            } else {
+            if (!socket) {
                 return console.log('window.socket is not defined so can not leave channel')
             }
+
+            //////////////////////////////////////////////////
+
+            console.log('leave', roomName)
+
+            // socket.off('content', receiveMessage);
+            socket.emit("unsubscribe", {
+                room: roomName
+            });
+
+            //Start listening on connect
+            socket.off('connect')
+            socket.off('reconnect')
+            socket.off('disconnect');
+
+            //console.log('Leave', listeners.length, 'listeners')
+            //Stop listening to all events
+            _.each(listeners, function(listener) {
+                socket.off(listener);
+            })
+
         }
 
         //////////////////////////////////////////////////
