@@ -47,6 +47,26 @@ angular.module('fluro.socket')
             /////////////////////////////////////////
 
              //Listen for changes to the user account
+            $rootScope.$watch('user._id', function(userID) {
+                console.log('socket - user changed');
+
+                if (currentUser) {
+                    console.log('socket - leaving user', currentUser);
+                    controller.leave(currentUser);
+                }
+
+                //If the user has authenticated
+                if (userID) {
+                     console.log('socket - joining channel', userID);
+                    //Set the current account and join the channel
+                    currentUser = userID;
+                    controller.join(currentUser);
+                } 
+            });
+
+            /////////////////////////////////////////
+
+             //Listen for changes to the user account
             $rootScope.$watch('user.account._id', function(userAccountID) {
                 console.log('socket - user channel changed');
 
@@ -54,8 +74,6 @@ angular.module('fluro.socket')
                     console.log('socket - leaving channel', currentAccount);
                     controller.leave(currentAccount);
                 }
-
-
 
                 //If the user has authenticated
                 if (userAccountID) {
@@ -66,26 +84,6 @@ angular.module('fluro.socket')
                 } 
                     
                 
-            });
-
-            /////////////////////////////////////////
-
-
-            //Listen for changes to the user account
-            $rootScope.$watch('user.account._id', function(userAccountID) {
-                console.log('user account change');
-                //If the user has authenticated
-                if (userAccountID) {
-                    console.log('connect to ', userAccountID);
-                    //Set the current account and join the channel
-                    currentAccount = userAccountID;
-                    controller.join(currentAccount);
-                } else {
-                    if (currentAccount) {
-                        console.log('leave current channel')
-                        controller.leave(currentAccount);
-                    }
-                }
             });
 
 
