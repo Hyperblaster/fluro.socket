@@ -42,6 +42,7 @@ angular.module('fluro.socket')
                 transports: ['websocket'],
                 upgrade: false
             });
+            
 
             /////////////////////////////////////////
 
